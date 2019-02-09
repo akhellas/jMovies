@@ -13,8 +13,8 @@ public class MyMovies {
         JSONObject genres = api.getGenres();
         System.out.println(genres.toJSONString()); 
         
-        JSONObject movies1 = api.getMoviesPage("1");
-        System.out.println(movies1.toJSONString()); 
+        JSONObject movies = api.getMovies();
+        System.out.println(movies.toJSONString()); 
     }
     
 }
