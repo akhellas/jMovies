@@ -1,21 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mymovies;
 
-/**
- *
- * @author AKHel
- */
+import java.util.HashMap;
+import managers.ApiManager;
+import org.json.simple.JSONObject;
+
 public class MyMovies {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+
+        ApiManager api = new ApiManager();
+        
+        JSONObject genres = api.getGenres();
+        System.out.println(genres.toJSONString()); 
+        
+        JSONObject movies1 = api.getMoviesPage("1");
+        System.out.println(movies1.toJSONString()); 
     }
     
 }
