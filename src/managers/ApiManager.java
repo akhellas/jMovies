@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -16,6 +17,7 @@ import org.json.simple.parser.ParseException;
 public class ApiManager {
     private static final String BASE_URL = "https://api.themoviedb.org/3";
     private static final String API_KEY = "9bf6edc1bede20b62ad6955aa954f1d0";
+    private static final Integer API_LIMIT = 40;
     
     private String buildUrlString(String path, Map<String, String> parameters)
     {
@@ -65,12 +67,13 @@ public class ApiManager {
         return request("/discover/movie", params);
     }
     
-    public JSONObject getMovies()
+    public JSONArray getMovies()
     {
-        JSONObject movies = new JSONObject();
-        for(int i = 1;  i < 40; i++)
+        JSONArray movies = new JSONArray();
+        for(int i = 1;  i <= API_LIMIT; i++)
         {
-            movies.put(i, getMoviesPage(i));
+            JSONObject page = getMoviesPage(i);
+            movies.addAll((JSONArray) page.get("results"));
         }
         return movies;
     }

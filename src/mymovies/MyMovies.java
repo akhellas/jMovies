@@ -1,7 +1,7 @@
 package mymovies;
 
-import java.util.HashMap;
 import managers.ApiManager;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class MyMovies {
@@ -13,7 +13,7 @@ public class MyMovies {
         JSONObject genres = api.getGenres();
         System.out.println(genres.toJSONString()); 
         
-        JSONObject movies = api.getMovies();
+        JSONArray movies = api.getMovies();
         System.out.println(movies.toJSONString()); 
     }
     
