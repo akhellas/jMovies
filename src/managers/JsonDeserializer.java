@@ -18,13 +18,17 @@ public final class JsonDeserializer {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final int[] ACCEPTABLE_GENRES = {28, 10749, 878};
 
-    private static Boolean isAcceptable(Object genreId)
+    public static Boolean isAcceptable(Object genreId)
     {
         return Arrays.stream(ACCEPTABLE_GENRES).anyMatch(x -> x == parseInt(genreId));
     }
     
     private static Integer parseInt(Object value)
     {
+        if (value.getClass().getName().equals("java.lang.Integer"))
+        {
+            return (int) value;
+        }
         return (int) (long) value;
     }
     
@@ -66,7 +70,12 @@ public final class JsonDeserializer {
             int gid = parseInt(genreIds.stream().filter(g -> isAcceptable(g)).findFirst().get());
             movie.setGenreId(genres.stream().filter(g -> g.getId() == gid).findFirst().get());
             
-            movie.setOverview(parseString(json.get("overview")));
+            String overview = parseString(json.get("overview"));
+            if (overview.length() > 500)
+            {
+                overview = overview.substring(0, 497) + "...";
+            }
+            movie.setOverview(overview);
 
             return movie;
         } catch (ParseException exception) {
