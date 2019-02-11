@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,7 +14,7 @@ import org.json.simple.parser.ParseException;
 public class ApiManager {
     private static final String BASE_URL = "https://api.themoviedb.org/3";
     private static final String API_KEY = "9bf6edc1bede20b62ad6955aa954f1d0";
-    private static final Integer API_LIMIT = 40;
+    private static final Integer API_LIMIT = 10;
     
     private String buildUrlString(String path, Map<String, String> parameters)
     {
@@ -52,9 +49,10 @@ public class ApiManager {
         }
     }
     
-    public JSONObject getGenres()
+    public JSONArray getGenres()
     {
-        return request("/genre/movie/list", new HashMap<>());
+        JSONObject json = request("/genre/movie/list", new HashMap<>());
+        return (JSONArray) json.get("genres");
     }
     
     public JSONObject getMoviesPage(int page)
