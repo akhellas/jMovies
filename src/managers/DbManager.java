@@ -1,5 +1,6 @@
 package managers;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -8,6 +9,9 @@ import javax.persistence.Query;
 import javax.swing.JOptionPane;
 
 import messages.Errors;
+import model.Genre;
+import model.Movie;
+import org.json.simple.JSONArray;
 
 public final class DbManager {
     private static final String PU_NAME = "MyMoviesPU";
@@ -56,6 +60,18 @@ public final class DbManager {
             clearMovies.executeUpdate();
             clearGenres.executeUpdate();
             clearFavoriteLists.executeUpdate();
+            
+            ApiManager api = new ApiManager();
+
+            JSONArray genresJson = api.getGenres();
+            List<Genre> genres = JsonDeserializer.genresFromJson(genresJson);
+
+            JSONArray moviesJson = api.getMovies();
+            List<Movie> movies = JsonDeserializer.moviesFromJson(moviesJson, genres);
+            
+            genres.stream().filter(g -> JsonDeserializer.isAcceptable(g.getId())).forEach(genre -> DbManager.getManager().persist(genre));
+            movies.forEach(movie -> DbManager.getManager().persist(movie));
+
             transaction.commit();
         }
         catch (Exception exception)
