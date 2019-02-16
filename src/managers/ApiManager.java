@@ -14,7 +14,7 @@ import org.json.simple.parser.ParseException;
 public class ApiManager {
     private static final String BASE_URL = "https://api.themoviedb.org/3";
     private static final String API_KEY = "a84e0b9280822246eae80170242fecd0";
-    private static final Integer API_LIMIT = 39;
+    private static final Integer API_LIMIT = 10;
     
     private String buildUrlString(String path, Map<String, String> parameters)
     {
