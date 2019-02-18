@@ -50,6 +50,7 @@ public final class DbManager {
 
     public static void initializeDb() {
         try {
+
             Query clearMovies = getManager().createQuery("DELETE FROM Movie");
             Query clearGenres = getManager().createQuery("DELETE FROM Genre");
             Query clearFavoriteLists = getManager().createQuery("DELETE FROM FavoriteList");

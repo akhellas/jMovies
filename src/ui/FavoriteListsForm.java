@@ -1,14 +1,18 @@
 package ui;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import javax.persistence.EntityManager;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
 import managers.DbManager;
 import model.FavoriteList;
+import model.Movie;
 
 public class FavoriteListsForm extends javax.swing.JInternalFrame {
-
-    private List<FavoriteList> lists;
 
     public FavoriteListsForm() {
         initComponents();
@@ -18,20 +22,14 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         return DbManager.getManager();
     }
 
-    private FavoriteList getSelectedFavoriteList() {
-        return favoriteListList.size() == 0 ? null : favoriteListList.get(0);
-    }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : getManager().createQuery("SELECT f FROM FavoriteList f");
+        MyMoviesPUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("MyMoviesPU").createEntityManager();
+        favoriteListQuery = java.beans.Beans.isDesignTime() ? null : MyMoviesPUEntityManager.createQuery("SELECT f FROM FavoriteList f");
         favoriteListList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : favoriteListQuery.getResultList();
-        movieQuery = getManager().createQuery("SELECT m FROM Movie m WHERE m.favoriteListId=:favoriteList").setParameter("favoriteList", getSelectedFavoriteList())
-        ;
-        movieList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : movieQuery.getResultList();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         favoriteListsList = new javax.swing.JList<>();
@@ -47,26 +45,24 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         org.jdesktop.swingbinding.JListBinding jListBinding = org.jdesktop.swingbinding.SwingBindings.createJListBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, favoriteListList, favoriteListsList);
+        jListBinding.setDetailBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
         bindingGroup.addBinding(jListBinding);
 
+        favoriteListsList.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                favoriteListsListPropertyChange(evt);
+            }
+        });
         jScrollPane1.setViewportView(favoriteListsList);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
-
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, movieList, moviesTable);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${title}"));
-        columnBinding.setColumnName("Title");
-        columnBinding.setColumnClass(String.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${rating}"));
-        columnBinding.setColumnName("Rating");
-        columnBinding.setColumnClass(Float.class);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${overview}"));
-        columnBinding.setColumnName("Overview");
-        columnBinding.setColumnClass(String.class);
-        bindingGroup.addBinding(jTableBinding);
-        jTableBinding.bind();
 
         jScrollPane2.setViewportView(moviesTable);
 
@@ -119,15 +115,6 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
-//        int isCanceled = JOptionPane.showOptionDialog(this,
-//                "Δώστε όνομα νέας Λίστας Αγαπημένων Ταινιών:",
-//                "Δημιουργία Λίστας Αγαπημένων Ταινιών",
-//                JOptionPane.OK_CANCEL_OPTION,
-//                JOptionPane.QUESTION_MESSAGE,
-//                null,
-//                new String[]{"Αποθήκευση", "Ακύρωση"},
-//                "default"
-//        );
 
         String name = JOptionPane.showInputDialog(
                 this,
@@ -142,8 +129,24 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_createButtonActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        System.out.println("shown fired");
+
+        favoriteListList.clear();
+        favoriteListList.addAll(DbManager.getFavoriteLists());
+        
+        favoriteListsList.setListData((Vector<? extends String>) favoriteListList.stream().map(fav -> fav.getName()));
+        
+//        favoriteListsList.firePropertyChange("model", favoriteListsList.getModel(), favoriteListList.toArray());
+    }//GEN-LAST:event_formComponentShown
+
+    private void favoriteListsListPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_favoriteListsListPropertyChange
+        System.out.println("propertyChanged: " + evt.getPropertyName());
+    }//GEN-LAST:event_favoriteListsListPropertyChange
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.persistence.EntityManager MyMoviesPUEntityManager;
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
@@ -155,8 +158,6 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar2;
-    private java.util.List<model.Movie> movieList;
-    private javax.persistence.Query movieQuery;
     private javax.swing.JTable moviesTable;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
