@@ -246,6 +246,9 @@ public class MainForm extends javax.swing.JFrame {
         UIManager.put("nimbusSelectionBackground", new Color(104, 93, 156));
         UIManager.put("text", new Color(230, 230, 230));
 
+        UIManager.put("OptionPane.cancelButtonText", "Ακύρωση");
+        UIManager.put("OptionPane.okButtonText", "ΟΚ");
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

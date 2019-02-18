@@ -45,9 +45,9 @@ public class Movie implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date releaseDate;
     @Basic(optional = false)
-    @Column(name = "RATING")
+    @Column(name = "RATING", length = 10)
     private float rating;
-    @Column(name = "OVERVIEW")
+    @Column(name = "OVERVIEW", length = 500)
     private String overview;
     @JoinColumn(name = "FAVORITE_LIST_ID", referencedColumnName = "ID")
     @ManyToOne

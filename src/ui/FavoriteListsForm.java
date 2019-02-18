@@ -2,25 +2,26 @@ package ui;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.swing.JOptionPane;
 import managers.DbManager;
 import model.FavoriteList;
 
 public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
     private List<FavoriteList> lists;
-    
+
     public FavoriteListsForm() {
         initComponents();
     }
-    
+
     private EntityManager getManager() {
         return DbManager.getManager();
     }
-    
+
     private FavoriteList getSelectedFavoriteList() {
         return favoriteListList.size() == 0 ? null : favoriteListList.get(0);
     }
-   
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -77,6 +78,11 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         createButton.setFocusable(false);
         createButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         createButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
         jToolBar2.add(createButton);
 
         editButton.setText("Επεξεργασία");
@@ -111,6 +117,30 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+//        int isCanceled = JOptionPane.showOptionDialog(this,
+//                "Δώστε όνομα νέας Λίστας Αγαπημένων Ταινιών:",
+//                "Δημιουργία Λίστας Αγαπημένων Ταινιών",
+//                JOptionPane.OK_CANCEL_OPTION,
+//                JOptionPane.QUESTION_MESSAGE,
+//                null,
+//                new String[]{"Αποθήκευση", "Ακύρωση"},
+//                "default"
+//        );
+
+        String name = JOptionPane.showInputDialog(
+                this,
+                "Δώστε όνομα νέας Λίστας Αγαπημένων Ταινιών:",
+                "Δημιουργία Λίστας Αγαπημένων Ταινιών",
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (name != null) {
+            FavoriteList newList = DbManager.createFavoriteList(name);
+            System.out.println(newList.toString());
+        }
+    }//GEN-LAST:event_createButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

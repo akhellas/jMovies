@@ -43,6 +43,10 @@ public final class DbManager {
         }
         return manager;
     }
+    
+    public static EntityTransaction getTransaction() {
+        return getManager().getTransaction();
+    }
 
     public static void initializeDb() {
         try {
@@ -50,7 +54,7 @@ public final class DbManager {
             Query clearGenres = getManager().createQuery("DELETE FROM Genre");
             Query clearFavoriteLists = getManager().createQuery("DELETE FROM FavoriteList");
 
-            EntityTransaction transaction = getManager().getTransaction();
+            EntityTransaction transaction = getTransaction();
             transaction.begin();
 
             clearMovies.executeUpdate();
@@ -77,5 +81,15 @@ public final class DbManager {
 
     public static List<FavoriteList> getFavoriteLists() {
         return getManager().createNamedQuery("FavoriteList.findAll").getResultList();
+    }
+    
+    public static FavoriteList createFavoriteList(String name) {
+        EntityTransaction transaction = getTransaction();
+        transaction.begin();
+        FavoriteList newList = new FavoriteList();
+        newList.setName(name);
+        getManager().persist(newList);
+        transaction.commit();
+        return newList;
     }
 }
