@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.beans.PropertyVetoException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JInternalFrame;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import managers.DbManager;
@@ -12,31 +13,29 @@ public class MainForm extends javax.swing.JFrame {
 
     private final WelcomeForm welcomeForm = new WelcomeForm();
     private final FavoriteListsForm favoriteListsForm = new FavoriteListsForm();
+    private final SearchForm searchForm = new SearchForm();
+    private final StatisticsForm statisticsForm = new StatisticsForm();
 
     public MainForm() {
         initComponents();
 
-        showWelcome();
+        showForm(welcomeForm, true);
     }
 
-    private void showWelcome() {
-        if (!welcomeForm.isVisible()) {
-            desktop.add(welcomeForm);
-            try {
-                welcomeForm.setMaximum(true);
-            } catch (PropertyVetoException ex) {
-                Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+    private void showForm(JInternalFrame form, Boolean isMazimized) {
+        if (!form.isVisible()) {
+            desktop.add(form);
+            if (isMazimized) {
+                try {
+                    form.setMaximum(true);
+                } catch (PropertyVetoException ex) {
+                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            welcomeForm.setVisible(true);
+            form.setVisible(true);
         }
     }
 
-    private void showFavoriteLists() {
-        if (!favoriteListsForm.isVisible()) {
-            desktop.add(favoriteListsForm);
-            favoriteListsForm.setVisible(true);
-        }
-    }
 
     class TaskInitialize extends SwingWorker<Void, Void> {
 
@@ -67,9 +66,13 @@ public class MainForm extends javax.swing.JFrame {
         desktop = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        welcomeMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         initializeMenuItem = new javax.swing.JMenuItem();
         favoriteListsMenuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        searchMenuItem = new javax.swing.JMenuItem();
+        statisticsMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
 
         dialogInitialize.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -158,6 +161,15 @@ public class MainForm extends javax.swing.JFrame {
 
         fileMenu.setText("Αρχείο");
 
+        welcomeMenuItem.setText("Αρχική");
+        welcomeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                welcomeMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(welcomeMenuItem);
+        fileMenu.add(jSeparator1);
+
         initializeMenuItem.setText("Ανάκτηση και Αποθήκευση Δεδομένων Ταινιών");
         initializeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -173,7 +185,23 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         fileMenu.add(favoriteListsMenuItem);
-        fileMenu.add(jSeparator1);
+
+        searchMenuItem.setText("Αναζήτηση Ταινιών");
+        searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(searchMenuItem);
+
+        statisticsMenuItem.setText("Στατιστικά");
+        statisticsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                statisticsMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(statisticsMenuItem);
+        fileMenu.add(jSeparator2);
 
         exitMenuItem.setText("Έξοδος");
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -202,7 +230,6 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void initializeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initializeMenuItemActionPerformed
-
         progressInitialize.setVisible(false);
         dialogInitialize.pack();
         dialogInitialize.setLocationRelativeTo(this);
@@ -211,10 +238,8 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_initializeMenuItemActionPerformed
 
     private void buttonInitializeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonInitializeActionPerformed
-
         progressInitialize.setVisible(true);
         new TaskInitialize().execute();
-
     }//GEN-LAST:event_buttonInitializeActionPerformed
 
     private void buttonCancelInitializeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelInitializeActionPerformed
@@ -222,13 +247,24 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonCancelInitializeActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        // TODO add your handling code here:
-
+        System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void favoriteListsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_favoriteListsMenuItemActionPerformed
-        showFavoriteLists();
+        showForm(favoriteListsForm, false);
     }//GEN-LAST:event_favoriteListsMenuItemActionPerformed
+
+    private void welcomeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_welcomeMenuItemActionPerformed
+        showForm(welcomeForm, true);
+    }//GEN-LAST:event_welcomeMenuItemActionPerformed
+
+    private void searchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuItemActionPerformed
+        showForm(searchForm, true);
+    }//GEN-LAST:event_searchMenuItemActionPerformed
+
+    private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
+        showForm(statisticsForm, true);
+    }//GEN-LAST:event_statisticsMenuItemActionPerformed
 
     public static void main(String args[]) {
         UIManager.put("control", new Color(128, 128, 128));
@@ -277,8 +313,12 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel labelInitialize;
     private javax.swing.JProgressBar progressInitialize;
+    private javax.swing.JMenuItem searchMenuItem;
+    private javax.swing.JMenuItem statisticsMenuItem;
+    private javax.swing.JMenuItem welcomeMenuItem;
     // End of variables declaration//GEN-END:variables
 }

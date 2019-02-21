@@ -1,6 +1,8 @@
 package managers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -85,9 +87,25 @@ public final class DbManager {
     }
 
     public static List<Movie> getMoviesByFavoriteList(FavoriteList list) {
-        Query query = getManager().createQuery("SELECT m FROM Movie m WHERE m.favoriteListId = :favoriteList", Movie.class)
-                .setParameter("favoriteList", list);
-        return query.getResultList();
+        return getManager().createQuery("SELECT m FROM Movie m WHERE m.favoriteListId = :favoriteList", Movie.class)
+                .setParameter("favoriteList", list)
+                .getResultList();
+    }
+
+    public static List<Movie> getBestMoviesByRating(int count) {
+        return getManager().createQuery("SELECT m FROM Movie m ORDER BY m.rating DESC", Movie.class)
+                .setMaxResults(count)
+                .getResultList();
+    }
+
+    public static List<Movie> getBestMoviesByList() {
+        Query query = getManager().createQuery("SELECT m FROM Movie m WHERE m.favoriteListId = :favoriteList ORDER BY m.rating DESC", Movie.class)
+                .setMaxResults(1);
+
+        return getFavoriteLists().stream()
+                .map(list -> (Movie) query.setParameter("favoriteList", list).getSingleResult())
+                .collect(Collectors.toList());
+
     }
 
     public static FavoriteList createFavoriteList(String name) {
