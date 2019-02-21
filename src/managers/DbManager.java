@@ -43,7 +43,7 @@ public final class DbManager {
         }
         return manager;
     }
-    
+
     public static EntityTransaction getTransaction() {
         return getManager().getTransaction();
     }
@@ -83,7 +83,13 @@ public final class DbManager {
     public static List<FavoriteList> getFavoriteLists() {
         return getManager().createNamedQuery("FavoriteList.findAll").getResultList();
     }
-    
+
+    public static List<Movie> getMoviesByFavoriteList(FavoriteList list) {
+        Query query = getManager().createQuery("SELECT m FROM Movie m WHERE m.favoriteListId = :favoriteList", Movie.class)
+                .setParameter("favoriteList", list);
+        return query.getResultList();
+    }
+
     public static FavoriteList createFavoriteList(String name) {
         EntityTransaction transaction = getTransaction();
         transaction.begin();
@@ -92,5 +98,28 @@ public final class DbManager {
         getManager().persist(newList);
         transaction.commit();
         return newList;
+    }
+
+    public static void updateFavoriteList(FavoriteList list) {
+        EntityTransaction transaction = getTransaction();
+        transaction.begin();
+        getManager().persist(list);
+        transaction.commit();
+    }
+
+    public static void deleteFavoriteList(FavoriteList list) {
+        EntityTransaction transaction = getTransaction();
+        transaction.begin();
+        List<Movie> movies = getMoviesByFavoriteList(list);
+        movies.forEach(movie -> {
+            movie.setFavoriteListId(null);
+            getManager().persist(movie);
+        });
+        getManager().remove(list);
+        transaction.commit();
+    }
+
+    public static void deleteFavoriteLists(List<FavoriteList> lists) {
+        lists.forEach(list -> deleteFavoriteList(list));
     }
 }
