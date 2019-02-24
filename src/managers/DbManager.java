@@ -1,7 +1,12 @@
 package managers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -82,6 +87,10 @@ public final class DbManager {
         }
     }
 
+    public static List<Genre> getGenres() {
+        return getManager().createNamedQuery("Genre.findAll").getResultList();
+    }
+
     public static List<FavoriteList> getFavoriteLists() {
         return getManager().createNamedQuery("FavoriteList.findAll").getResultList();
     }
@@ -105,7 +114,27 @@ public final class DbManager {
         return getFavoriteLists().stream()
                 .map(list -> (Movie) query.setParameter("favoriteList", list).getSingleResult())
                 .collect(Collectors.toList());
+    }
 
+    public static List<Movie> getMoviesByGenreAndYear(Genre genre, int year) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return getManager().createQuery("SELECT m FROM Movie m WHERE m.genreId = :genre AND m.releaseDate >= :yearStart AND m.releaseDate <= :yearEnd", Movie.class)
+                    .setParameter("genre", genre)
+                    .setParameter("yearStart", format.parse(year + "-01-01"))
+                    .setParameter("yearEnd", format.parse(year + "-12-31"))
+                    .getResultList();
+        } catch (ParseException ex) {
+            Logger.getLogger(DbManager.class.getName()).log(Level.SEVERE, null, ex);
+            return new ArrayList<>();
+        }
+    }
+    
+    public static void updateMovie(Movie movie) {
+        EntityTransaction transaction = getTransaction();
+        transaction.begin();
+        getManager().persist(movie);
+        transaction.commit();
     }
 
     public static FavoriteList createFavoriteList(String name) {

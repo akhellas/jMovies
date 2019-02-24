@@ -50,7 +50,7 @@ public class Movie implements Serializable {
     @Column(name = "OVERVIEW", length = 500)
     private String overview;
     @JoinColumn(name = "FAVORITE_LIST_ID", referencedColumnName = "ID")
-    @ManyToOne
+    @ManyToOne(optional = true)
     private FavoriteList favoriteListId;
     @JoinColumn(name = "GENRE_ID", referencedColumnName = "ID")
     @ManyToOne
