@@ -3,7 +3,6 @@ package managers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,41 +12,34 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.swing.JOptionPane;
 
-import messages.Errors;
 import model.FavoriteList;
 import model.Genre;
 import model.Movie;
-import org.json.simple.JSONArray;
 
 public final class DbManager {
 
+    private static final String DB_CONNECTION_ERROR = "Αποτυχία σύνδεσης με τη Βάση Δεδομένων! \n\n(Σιγουρευτείτε ότι έχετε συνδεθεί μέσω του NetBeans IDE)";
+    private static final String DB_INITIALIZATION_ERROR = "Αποτυχία αρχικοποίησης της Βάσης Δεδομένων!";
     private static final String PU_NAME = "MyMoviesPU";
+
     private static EntityManagerFactory factory;
     private static EntityManager manager;
 
-    public static EntityManagerFactory getFactory() {
-        if (factory == null) {
-            try {
-                factory = Persistence.createEntityManagerFactory(PU_NAME);
-            } catch (Exception exception) {
-                System.out.println(exception);
-                JOptionPane.showMessageDialog(null, Errors.DB_CONNECTION_ERROR, "ERROR", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        return factory;
-    }
-
+    // μέθοδος που αρχικοποιείτον EntityManager αν δεν έχει αρχικοποιηθεί ήδη
+    // και επιστρέφει το static instance που χρησιμοποιείται από την εφαρμογή
     public static EntityManager getManager() {
-        if (manager == null) {
-            try {
-                manager = getFactory().createEntityManager();
-            } catch (Exception exception) {
-                System.out.println(exception);
-                JOptionPane.showMessageDialog(null, Errors.DB_CONNECTION_ERROR, "ERROR", JOptionPane.ERROR_MESSAGE);
+        try {
+            if (factory == null) {
+                factory = Persistence.createEntityManagerFactory(PU_NAME);
             }
+            if (manager == null) {
+                manager = factory.createEntityManager();
+            }
+        } catch (Exception exception) {
+            UIHelper.showError(null, DB_CONNECTION_ERROR);
         }
+
         return manager;
     }
 
@@ -55,9 +47,9 @@ public final class DbManager {
         return getManager().getTransaction();
     }
 
-    public static void initializeDb() {
+    public static void initializeDb(List<Genre> genres, List<Movie> movies) throws Exception {
         try {
-
+            System.out.println("eimaste edw");
             Query clearMovies = getManager().createQuery("DELETE FROM Movie");
             Query clearGenres = getManager().createQuery("DELETE FROM Genre");
             Query clearFavoriteLists = getManager().createQuery("DELETE FROM FavoriteList");
@@ -69,21 +61,12 @@ public final class DbManager {
             clearGenres.executeUpdate();
             clearFavoriteLists.executeUpdate();
 
-            ApiManager api = new ApiManager();
-
-            JSONArray genresJson = api.getGenres();
-            List<Genre> genres = JsonDeserializer.genresFromJson(genresJson);
-
-            JSONArray moviesJson = api.getMovies();
-            List<Movie> movies = JsonDeserializer.moviesFromJson(moviesJson, genres);
-
-            genres.stream().filter(g -> JsonDeserializer.isAcceptable(g.getId())).forEach(genre -> DbManager.getManager().persist(genre));
+            genres.forEach(genre -> DbManager.getManager().persist(genre));
             movies.forEach(movie -> DbManager.getManager().persist(movie));
 
             transaction.commit();
         } catch (Exception exception) {
-            // TODO: add error messages
-            System.out.println(exception);
+            throw new Exception(DB_INITIALIZATION_ERROR);
         }
     }
 
@@ -129,7 +112,7 @@ public final class DbManager {
             return new ArrayList<>();
         }
     }
-    
+
     public static void updateMovie(Movie movie) {
         EntityTransaction transaction = getTransaction();
         transaction.begin();

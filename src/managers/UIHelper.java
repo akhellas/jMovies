@@ -1,7 +1,9 @@
 package managers;
 
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -12,6 +14,14 @@ import javax.swing.text.JTextComponent;
 
 public final class UIHelper {
 
+    public static void showError(Component parent, String message) {
+        JOptionPane.showMessageDialog(parent, message, "Σφάλμα", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    public static void showInfo(Component parent, String message, String title) {
+        JOptionPane.showMessageDialog(parent, message, title.equals("") ? "MyMovies" : title, JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
         Objects.requireNonNull(text);
         Objects.requireNonNull(changeListener);

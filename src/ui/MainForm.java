@@ -2,19 +2,32 @@ package ui;
 
 import java.awt.Color;
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import managers.ApiManager;
 import managers.DbManager;
+import managers.JsonDeserializer;
+import managers.UIHelper;
+import model.Genre;
+import model.Movie;
+import org.json.simple.JSONArray;
 
 public class MainForm extends javax.swing.JFrame {
+
+    private static final String DB_INITIALIZATION_SUCCESS = "Η ανάκτηση των δεδομένων ολοκληρώθηκε";
 
     private final WelcomeForm welcomeForm = new WelcomeForm();
     private final FavoriteListsForm favoriteListsForm = new FavoriteListsForm();
     private final SearchForm searchForm = new SearchForm();
     private final StatisticsForm statisticsForm = new StatisticsForm();
+    private final AboutForm aboutForm = new AboutForm();
 
     public MainForm() {
         initComponents();
@@ -22,10 +35,10 @@ public class MainForm extends javax.swing.JFrame {
         showForm(welcomeForm, true);
     }
 
-    private void showForm(JInternalFrame form, Boolean isMazimized) {
+    private void showForm(JInternalFrame form, Boolean isMaximized) {
         if (!form.isVisible()) {
             desktop.add(form);
-            if (isMazimized) {
+            if (isMaximized) {
                 try {
                     form.setMaximum(true);
                 } catch (PropertyVetoException ex) {
@@ -33,15 +46,35 @@ public class MainForm extends javax.swing.JFrame {
                 }
             }
             form.setVisible(true);
+        } else {
+            form.toFront();
         }
     }
 
-
     class TaskInitialize extends SwingWorker<Void, Void> {
+
+        private List<Genre> genres = new ArrayList<>();
+        private List<Movie> movies = new ArrayList<>();
 
         @Override
         protected Void doInBackground() throws Exception {
-            DbManager.initializeDb();
+            try {
+                ApiManager api = new ApiManager();
+
+                JSONArray genresJson = api.getGenres();
+                genres = (List<Genre>) JsonDeserializer.genresFromJson(genresJson)
+                        .stream()
+                        .filter(g -> JsonDeserializer.isAcceptable(g.getId()))
+                        .collect(Collectors.toList());
+
+                JSONArray moviesJson = api.getMovies();
+                movies = JsonDeserializer.moviesFromJson(moviesJson, genres);
+                DbManager.initializeDb(genres, movies);
+                
+                UIHelper.showInfo(null, DB_INITIALIZATION_SUCCESS, "");
+            } catch (Exception exception) {
+                UIHelper.showError(null, exception.getMessage());
+            }
             return null;
         }
 
@@ -74,6 +107,8 @@ public class MainForm extends javax.swing.JFrame {
         statisticsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
+        aboutMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
 
         dialogInitialize.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         dialogInitialize.setTitle("Ανάκτηση και Αποθήκευση Δεδομένων");
@@ -213,6 +248,18 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenuBar1.add(fileMenu);
 
+        aboutMenu.setText("Σχετικά");
+
+        aboutMenuItem.setText("Σχετικά με το MyMovies");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        aboutMenu.add(aboutMenuItem);
+
+        jMenuBar1.add(aboutMenu);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -259,12 +306,16 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_welcomeMenuItemActionPerformed
 
     private void searchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuItemActionPerformed
-        showForm(searchForm, true);
+        showForm(searchForm, false);
     }//GEN-LAST:event_searchMenuItemActionPerformed
 
     private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
-        showForm(statisticsForm, true);
+        showForm(statisticsForm, false);
     }//GEN-LAST:event_statisticsMenuItemActionPerformed
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        showForm(aboutForm, true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     public static void main(String args[]) {
         UIManager.put("control", new Color(128, 128, 128));
@@ -302,6 +353,8 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu aboutMenu;
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton buttonCancelInitialize;
     private javax.swing.JButton buttonInitialize;
     private javax.swing.JDesktopPane desktop;

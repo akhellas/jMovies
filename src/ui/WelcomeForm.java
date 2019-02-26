@@ -39,6 +39,8 @@ public class WelcomeForm extends javax.swing.JInternalFrame {
 
         setBorder(null);
         setClosable(true);
+        setTitle("Αρχική");
+        setToolTipText("");
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
