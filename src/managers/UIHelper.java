@@ -17,11 +17,16 @@ public final class UIHelper {
     public static void showError(Component parent, String message) {
         JOptionPane.showMessageDialog(parent, message, "Σφάλμα", JOptionPane.ERROR_MESSAGE);
     }
-    
+
     public static void showInfo(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title.equals("") ? "MyMovies" : title, JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
+    public static boolean showConfirmation(Component parent, String message, String title) {
+        int confirmed = JOptionPane.showOptionDialog(parent, message, title.equals("") ? "Επιβεβαίωση" : title, 0, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Ναι", "Ακύρωση"}, null);
+        return confirmed == 0;
+    }
+
     public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
         Objects.requireNonNull(text);
         Objects.requireNonNull(changeListener);

@@ -2,13 +2,14 @@ package ui;
 
 import java.awt.Color;
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
+
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import managers.ApiManager;
@@ -18,9 +19,11 @@ import managers.UIHelper;
 import model.Genre;
 import model.Movie;
 import org.json.simple.JSONArray;
+import org.json.simple.parser.ParseException;
 
 public class MainForm extends javax.swing.JFrame {
 
+    private static final String API_GENERAL_ERROR = "Αποτυχία σύνδεσης με το API (api.themoviedb.org)";
     private static final String DB_INITIALIZATION_SUCCESS = "Η ανάκτηση των δεδομένων ολοκληρώθηκε";
 
     private final WelcomeForm welcomeForm = new WelcomeForm();
@@ -57,7 +60,7 @@ public class MainForm extends javax.swing.JFrame {
         private List<Movie> movies = new ArrayList<>();
 
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Void doInBackground() {
             try {
                 ApiManager api = new ApiManager();
 
@@ -69,11 +72,14 @@ public class MainForm extends javax.swing.JFrame {
 
                 JSONArray moviesJson = api.getMovies();
                 movies = JsonDeserializer.moviesFromJson(moviesJson, genres);
+
                 DbManager.initializeDb(genres, movies);
-                
+
                 UIHelper.showInfo(null, DB_INITIALIZATION_SUCCESS, "");
-            } catch (Exception exception) {
-                UIHelper.showError(null, exception.getMessage());
+            } catch (IOException | ParseException apiException) {
+                UIHelper.showError(null, API_GENERAL_ERROR);
+            } catch (Exception dbException) {
+                UIHelper.showError(null, dbException.getMessage());
             }
             return null;
         }
@@ -344,7 +350,7 @@ public class MainForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(() -> {

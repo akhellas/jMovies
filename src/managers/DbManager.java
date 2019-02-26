@@ -49,7 +49,6 @@ public final class DbManager {
 
     public static void initializeDb(List<Genre> genres, List<Movie> movies) throws Exception {
         try {
-            System.out.println("eimaste edw");
             Query clearMovies = getManager().createQuery("DELETE FROM Movie");
             Query clearGenres = getManager().createQuery("DELETE FROM Genre");
             Query clearFavoriteLists = getManager().createQuery("DELETE FROM FavoriteList");
@@ -62,7 +61,10 @@ public final class DbManager {
             clearFavoriteLists.executeUpdate();
 
             genres.forEach(genre -> DbManager.getManager().persist(genre));
-            movies.forEach(movie -> DbManager.getManager().persist(movie));
+
+            movies.stream()
+                  .collect(Collectors.toMap(Movie::getId, m -> m, (m, q) -> m)).values()
+                  .forEach(movie -> DbManager.getManager().persist(movie));
 
             transaction.commit();
         } catch (Exception exception) {

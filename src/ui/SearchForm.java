@@ -87,6 +87,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
 
     private void getMovies() {
         DefaultTableModel tableModel = (DefaultTableModel) moviesTable.getModel();
+        int rowIndex = moviesTable.getSelectedRow();
         tableModel.setRowCount(0);
 
         movies = DbManager.getMoviesByGenreAndYear(getSelectedGenre(), Integer.parseInt(yearTextField.getText()));
@@ -99,6 +100,9 @@ public class SearchForm extends javax.swing.JInternalFrame {
         });
 
         moviesTable.setModel(tableModel);
+        if (rowIndex != -1) {
+            moviesTable.setRowSelectionInterval(rowIndex, rowIndex);
+        }
         listsComboBox.setSelectedIndex(0);
     }
 
@@ -224,10 +228,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
 
         moviesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Τίτλος Ταινίας", "Βαθμολογία", "Περιγραφή"
@@ -248,6 +249,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
+        moviesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         moviesTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(moviesTable);
         if (moviesTable.getColumnModel().getColumnCount() > 0) {

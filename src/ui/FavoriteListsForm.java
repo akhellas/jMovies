@@ -1,22 +1,23 @@
 package ui;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import managers.DbManager;
+import managers.UIHelper;
 import model.FavoriteList;
 import model.Movie;
 
 public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
+    private static final String REMOVE_LIST_CONFIRMATION_MESSAGE = "Είστε σίγουροι ότι επιθυμείτε την οριστική διαγραφή των επιλεγμένων Λιστών;";
+
     private List<FavoriteList> lists;
     private List<Movie> movies;
-    private final String[] columnNames = new String[]{"Τίτλος Ταινίας", "Βαθμολογία", "Περιγραφή"};
 
     public FavoriteListsForm() {
         initComponents();
@@ -92,6 +93,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
+        setResizable(true);
         setTitle("Διαχείριση Λιστών Αγαπημένων Ταινιών");
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -142,7 +144,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
         jToolBar2.setRollover(true);
 
-        createButton.setText("Δημιουργία");
+        createButton.setText("Δημιουργία...");
         createButton.setFocusable(false);
         createButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         createButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -153,7 +155,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         });
         jToolBar2.add(createButton);
 
-        editButton.setText("Επεξεργασία");
+        editButton.setText("Επεξεργασία...");
         editButton.setFocusable(false);
         editButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         editButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -196,13 +198,14 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
 
+        UIManager.put("OptionPane.okButtonText", "Αποθήκευση");
         String name = JOptionPane.showInputDialog(
                 this,
                 "Δώστε όνομα νέας Λίστας Αγαπημένων Ταινιών:",
                 "Δημιουργία Λίστας Αγαπημένων Ταινιών",
                 JOptionPane.QUESTION_MESSAGE
         );
-
+        UIManager.put("OptionPane.okButtonText", "ΟΚ");
         if (name != null) {
             FavoriteList newList = DbManager.createFavoriteList(name);
             getFavoriteLists();
@@ -215,7 +218,9 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formComponentShown
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        DbManager.deleteFavoriteLists(getSelectedLists());
+        if (UIHelper.showConfirmation(this, REMOVE_LIST_CONFIRMATION_MESSAGE, "Επιβεβαίωση Διαγραφής")) {
+            DbManager.deleteFavoriteLists(getSelectedLists());
+        }
         getFavoriteLists();
     }//GEN-LAST:event_deleteButtonActionPerformed
 
@@ -228,6 +233,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         FavoriteList list = getSelectedList();
+        UIManager.put("OptionPane.okButtonText", "Αποθήκευση");
         String name = (String) JOptionPane.showInputDialog(
                 this,
                 "Δώστε νέο όνομα Λίστας Αγαπημένων Ταινιών:",
@@ -237,7 +243,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
                 null,
                 list.getName()
         );
-
+        UIManager.put("OptionPane.okButtonText", "ΟΚ");
         if (name != null) {
             list.setName(name);
             DbManager.updateFavoriteList(list);
