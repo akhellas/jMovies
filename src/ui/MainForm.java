@@ -22,6 +22,7 @@ import model.Movie;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 
+// Βασική Φόρμα Εφαρμογής
 public class MainForm extends javax.swing.JFrame {
 
     private static final String API_GENERAL_ERROR = "Αποτυχία σύνδεσης με το API (api.themoviedb.org)";
@@ -39,6 +40,7 @@ public class MainForm extends javax.swing.JFrame {
         showForm(welcomeForm, true);
     }
 
+    // μέθοδος για την εμφάνιση των διαφόρων φορμών της εφαρμογής
     private void showForm(JInternalFrame form, Boolean isMaximized) {
         if (!form.isVisible()) {
             desktop.add(form);
@@ -55,6 +57,8 @@ public class MainForm extends javax.swing.JFrame {
         }
     }
 
+    // SwingWorker για την εκτέλεση της αρχικοποίησης της ΒΔ
+    // σε άλλο thread για να μην "παγώνει" το UI
     class TaskInitialize extends SwingWorker<Void, Void> {
 
         private List<Genre> genres = new ArrayList<>();
@@ -63,17 +67,26 @@ public class MainForm extends javax.swing.JFrame {
         @Override
         protected Void doInBackground() {
             try {
-                ApiManager api = new ApiManager();
-
-                JSONArray genresJson = api.getGenres();
+                JSONArray genresJson = ApiManager.getGenres();
+                
+                // κάνουμε deserialize από json σε λίστα από Genre τα genres και
+                // τα φιλτράρουμε σύμφωνα με τις απαιτήσεις της εργασίας
                 genres = (List<Genre>) JsonDeserializer.genresFromJson(genresJson)
                         .stream()
                         .filter(g -> JsonDeserializer.isAcceptable(g.getId()))
                         .collect(Collectors.toList());
 
-                JSONArray moviesJson = api.getMovies();
-                movies = JsonDeserializer.moviesFromJson(moviesJson, genres);
+                JSONArray moviesJson = ApiManager.getMovies();
 
+                // κάνουμε deserialize το json με τις ταινίες και επειδή μερικές φορές
+                // το API μας επιστρέφει την ίδια ταινία σε παραπάνω από μία σελίδες, 
+                // τις φιλτράρουμε με το id τους
+                movies = JsonDeserializer.moviesFromJson(moviesJson, genres)
+                        .stream()
+                        .collect(Collectors.toMap(Movie::getId, m -> m, (m, q) -> m))
+                        .values()
+                        .stream()
+                        .collect(Collectors.toList());
                 DbManager.initializeDb(genres, movies);
 
                 SwingUtilities.invokeLater(() -> {
@@ -291,6 +304,7 @@ public class MainForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Μενού "Αρχείο -> Ανάκτηση και Αποθήκευση Δεδομένων Ταινιών"
     private void initializeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initializeMenuItemActionPerformed
         progressInitialize.setVisible(false);
         dialogInitialize.pack();
@@ -299,40 +313,50 @@ public class MainForm extends javax.swing.JFrame {
         dialogInitialize.setVisible(true);
     }//GEN-LAST:event_initializeMenuItemActionPerformed
 
+    // Κουμπί "Αρχικοποίηση" του πλαισίου διαλόγου για την αρχικοποίηση της ΒΔ
     private void buttonInitializeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonInitializeActionPerformed
         progressInitialize.setVisible(true);
         new TaskInitialize().execute();
     }//GEN-LAST:event_buttonInitializeActionPerformed
 
+    // Κουμπί "Ακύρωση" του πλαισίου διαλόγου για την αρχικοποίηση της ΒΔ
     private void buttonCancelInitializeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelInitializeActionPerformed
         dialogInitialize.setVisible(false);
     }//GEN-LAST:event_buttonCancelInitializeActionPerformed
 
+    // Μενού "Αρχείο -> Έξοδος"
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
+    // Μενού "Αρχείο -> Διαχείριση Λιστών Αγαπημένων Ταινιών"
     private void favoriteListsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_favoriteListsMenuItemActionPerformed
         showForm(favoriteListsForm, false);
     }//GEN-LAST:event_favoriteListsMenuItemActionPerformed
 
+    // Μενού "Αρχείο -> Αρχική"
     private void welcomeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_welcomeMenuItemActionPerformed
         showForm(welcomeForm, true);
     }//GEN-LAST:event_welcomeMenuItemActionPerformed
 
+    // Μενού "Αρχείο -> Αναζήτηση Ταινιών"
     private void searchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuItemActionPerformed
         showForm(searchForm, false);
     }//GEN-LAST:event_searchMenuItemActionPerformed
 
+    // Μενού "Αρχείο -> Στατιστικά"
     private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
         showForm(statisticsForm, false);
     }//GEN-LAST:event_statisticsMenuItemActionPerformed
 
+    // Μενού "Σχετικά -> Σχετικά με το MyMovies"
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         showForm(aboutForm, true);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
+    // η main της εφαρμογής
     public static void main(String args[]) {
+        // Αρχικοποίηση του θέματος "Dark Nimbus" για την εμφάνιση του UI
         UIManager.put("control", new Color(128, 128, 128));
         UIManager.put("info", new Color(128, 128, 128));
         UIManager.put("nimbusBase", new Color(18, 30, 49));

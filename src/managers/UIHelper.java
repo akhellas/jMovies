@@ -12,6 +12,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
+// Κλάση με helper μεθόδους για το UI
 public final class UIHelper {
 
     public static void showError(Component parent, String message) {
@@ -27,6 +28,7 @@ public final class UIHelper {
         return confirmed == 0;
     }
 
+    // ChangeListener που χρησιμοποιούμε για την παρακολούθηση αλλαγών σε πλαίσιο κειμένου
     public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
         Objects.requireNonNull(text);
         Objects.requireNonNull(changeListener);

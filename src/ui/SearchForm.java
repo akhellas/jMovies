@@ -2,13 +2,11 @@ package ui;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultRowSorter;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import managers.DbManager;
 import managers.UIHelper;
@@ -17,6 +15,7 @@ import model.FavoriteList;
 import model.Genre;
 import model.Movie;
 
+// Φόρμα "Αναζήτηση Ταινιών"
 public class SearchForm extends javax.swing.JInternalFrame {
 
     private List<Genre> genres;
@@ -26,6 +25,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
     public SearchForm() {
         initComponents();
 
+        // προσθήκη listener για τις αλλαγές του πλαισίου κειμένου για το έτος κυκλοφορίας
         UIHelper.addChangeListener(yearTextField, e -> updateSearchButtonState());
         moviesTable.setAutoCreateRowSorter(true);
         DefaultRowSorter sorter = (DefaultRowSorter) moviesTable.getRowSorter();
@@ -34,6 +34,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
         sorter.setSortsOnUpdates(true);
 
         ListSelectionModel selectionModel = moviesTable.getSelectionModel();
+        // προσθήκη listener για την παρακολούθηση των αλλαγών στην επιλογή ταινίας του πίνακα
         selectionModel.addListSelectionListener((ListSelectionEvent lse) -> {
             if (!lse.getValueIsAdjusting()) {
                 Movie selected = getSelectedMovie();
@@ -46,6 +47,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
                         : lists.indexOf(lists.stream().filter(fl -> fl.getId().equals(selected.getFavoriteListId().getId())).findFirst().get());
 
                 SwingUtilities.invokeLater(() -> {
+                    // επιλογή της λίστας στην οποία ανήκει η ταινία (αν ανήκει σε κάποια)
                     listsComboBox.setSelectedIndex(index + 1);
                 });
 
@@ -102,6 +104,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
         });
 
         moviesTable.setModel(tableModel);
+        // αν στον πίνακα με τις ταινίες ήταν κάποια επιλεγμένη, την επιλέγει ξανά
         if (rowIndex != -1) {
             moviesTable.setRowSelectionInterval(rowIndex, rowIndex);
         }
@@ -119,6 +122,8 @@ public class SearchForm extends javax.swing.JInternalFrame {
         getMovies();
     }
 
+    // Ενεργοποίηση/Απενεργοποίηση κουμπιού "Αναζήτηση" ανάλογα
+    // με το αν έχουν συμπληρωθεί τα απαραίτητα κριτήρια
     private void updateSearchButtonState() {
         try {
             int year = Integer.parseInt(yearTextField.getText());
@@ -130,6 +135,8 @@ public class SearchForm extends javax.swing.JInternalFrame {
         }
     }
 
+    // Ενεργοποίηση/Απενεργοποίηση κουμπιού "Αφαίρεση από Λίστα" ανάλογα
+    // με το αν η επιλεγμένη ταινία έχει προστεθεί ή όχι σε λίστα
     private void updateRemoveButtonState() {
         removeButton.setEnabled(listsComboBox.getSelectedIndex() > 0);
     }
@@ -320,10 +327,12 @@ public class SearchForm extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Κουμπί "Αφαίρεση από Λίστα"
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         setSelectedMovieFavoriteList(null);
     }//GEN-LAST:event_removeButtonActionPerformed
 
+    // Κουμπί "Αναζήτηση"
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         getMovies();
     }//GEN-LAST:event_searchButtonActionPerformed
@@ -336,6 +345,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
         updateSearchButtonState();
     }//GEN-LAST:event_formComponentShown
 
+    // Κουμπί "Καθαρισμός Κριτηρίων"
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         genreComboBox.setSelectedIndex(0);
         yearTextField.setText("");

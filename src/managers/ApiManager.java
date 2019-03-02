@@ -11,13 +11,16 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class ApiManager {
+// Κλάση για τη διαχείριση των κλήσεων προς το API του themoviedb.org
+public final class ApiManager {
 
     private static final String BASE_URL = "https://api.themoviedb.org/3";
     private static final String API_KEY = "a84e0b9280822246eae80170242fecd0";
-    private static final Integer API_LIMIT = 40;
+    // ΠΑΡΑΔΟΧΗ: επειδή το API μας κάνει timeout, βάλαμε αυθαίρετα το όριο των 40 σελίδων αποτελεσμάτων
+    private static final Integer API_LIMIT = 40; 
 
-    private String buildUrlString(String path, Map<String, String> parameters) {
+    // μέθοδος που "χτίζει" το url για τις κλήσεις στο API ανάλογα με τα key-value pairs παραμέτρων που της περνάμε
+    private static String buildUrlString(String path, Map<String, String> parameters) {
         String query = BASE_URL + path + "?api_key=" + API_KEY;
         query = parameters.entrySet()
                 .stream()
@@ -27,7 +30,8 @@ public class ApiManager {
         return query;
     }
 
-    private JSONObject request(String path, Map<String, String> parameters) throws IOException, ParseException {
+    // ο κώδικας για την εκτέλεση της κλήσης είναι πανομοιότυπος και δεν χρειάζεται να επαναλαμβάνεται σε κάθε μέθοδο
+    private static JSONObject request(String path, Map<String, String> parameters) throws IOException, ParseException {
         URL url = new URL(buildUrlString(path, parameters));
 
         InputStream stream = url.openStream();
@@ -39,12 +43,14 @@ public class ApiManager {
         return json;
     }
 
-    public JSONArray getGenres() throws IOException, ParseException {
+    // επιστρέφει τα είδη ταινιών
+    public static JSONArray getGenres() throws IOException, ParseException {
         JSONObject json = request("/genre/movie/list", new HashMap<>());
         return (JSONArray) json.get("genres");
     }
 
-    public JSONObject getMoviesPage(int page) throws IOException, ParseException {
+    // μέθοδος που επιστρέφει μια σελίδα με ταινίες με τα συγκεκριμένα κριτήρια
+    public static JSONObject getMoviesPage(int page) throws IOException, ParseException {
         Map<String, String> params = new HashMap<>();
         params.put("primary_release_year.gte", "2000");
         params.put("with_genres", "28|10749|878");
@@ -53,7 +59,8 @@ public class ApiManager {
         return request("/discover/movie", params);
     }
 
-    public JSONArray getMovies() throws IOException, ParseException {
+    // μέθοδος για την επιστροφή όλων των σελίδων ταινιών με τα συγκεκριμένα κριτήρια
+    public static JSONArray getMovies() throws IOException, ParseException {
         JSONArray movies = new JSONArray();
         for (int i = 1; i <= API_LIMIT; i++) {
             JSONObject page = getMoviesPage(i);

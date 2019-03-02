@@ -12,6 +12,7 @@ import managers.UIHelper;
 import model.FavoriteList;
 import model.Movie;
 
+// Φόρμα "Διαχείριση Λιστών Αγαπημένων Ταινιών"
 public class FavoriteListsForm extends javax.swing.JInternalFrame {
 
     private static final String REMOVE_LIST_CONFIRMATION_MESSAGE = "Είστε σίγουροι ότι επιθυμείτε την οριστική διαγραφή των επιλεγμένων Λιστών;";
@@ -37,6 +38,8 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         return lists.get(index);
     }
 
+    // ενεργοποιεί/απενεργοποιεί τα κουμπία "Διαγραφή" και "Επεξεργασία"
+    // ανάλογα με το πόσες λίστες είναι επιλεγμένες
     private void updateButtons() {
         editButton.setEnabled(favoriteListsList.getSelectedIndices().length == 1);
         deleteButton.setEnabled(favoriteListsList.getSelectedIndices().length > 0);
@@ -197,6 +200,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Κουμπί "Δημιουργία"
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
 
         UIManager.put("OptionPane.okButtonText", "Αποθήκευση");
@@ -218,6 +222,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         getMoviesBySelectedList();
     }//GEN-LAST:event_formComponentShown
 
+    // Κουμπί "Διαγραφή"
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         if (UIHelper.showConfirmation(this, REMOVE_LIST_CONFIRMATION_MESSAGE, "Επιβεβαίωση Διαγραφής")) {
             DbManager.deleteFavoriteLists(getSelectedLists());
@@ -232,6 +237,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_favoriteListsListValueChanged
 
+    // Κουμπί "Επεξεργασία"
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         FavoriteList list = getSelectedList();
         UIManager.put("OptionPane.okButtonText", "Αποθήκευση");

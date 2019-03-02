@@ -11,6 +11,10 @@ import model.Movie;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+
+// Κλάση που χρησιμοποιούμε για να μετατρέψουμε τα αποτελέσματα
+// του API που είναι σε JSON μορφή στα JPA models που χρησιμοποιούμε
+// στην εφαρμογή
 public final class JsonDeserializer {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -68,17 +72,20 @@ public final class JsonDeserializer {
         }
         
         JSONArray genreIds = (JSONArray) json.get("genre_ids");
+        
+        // βρίσκουμε το πρώτο genre από τη λίστα των genre_ids που περιέχει το json
+        // το οποίο να ανήκει στα αποδεκτά από τις απαιτήσεις της εργασίας genres
         int gid = parseInt(genreIds.stream().filter(g -> isAcceptable(g)).findFirst().get());
         movie.setGenreId(genres.stream().filter(g -> g.getId() == gid).findFirst().get());
 
         String overview = parseString(json.get("overview"));
+        // φροντίζουμε το overview να μην ξεπερνάει σε μήκος τους 500 χαρακτήρες
         if (overview.length() > 500) {
             overview = overview.substring(0, 497) + "...";
         }
         movie.setOverview(overview);
 
         return movie;
-
     }
 
     public static List<Movie> moviesFromJson(JSONArray array, List<Genre> genres) {

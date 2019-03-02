@@ -3,6 +3,7 @@ package ui;
 import javax.swing.table.DefaultTableModel;
 import managers.DbManager;
 
+// Φόρμα "Στατιστικά"
 public class StatisticsForm extends javax.swing.JInternalFrame {
 
     public StatisticsForm() {
@@ -99,6 +100,7 @@ public class StatisticsForm extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Κουμπί "Οι Καλύτερες 10 Ταινίες"
     private void bestMoviesByRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bestMoviesByRatingButtonActionPerformed
         bestMoviesByListButton.setSelected(false);
 
@@ -118,6 +120,7 @@ public class StatisticsForm extends javax.swing.JInternalFrame {
         moviesTable.setModel(tableModel);
     }//GEN-LAST:event_bestMoviesByRatingButtonActionPerformed
 
+    // Κουμπί "Οι Καλύτερες Ταινίες ανά Λίστα"
     private void bestMoviesByListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bestMoviesByListButtonActionPerformed
         bestMoviesByRatingButton.setSelected(false);
 

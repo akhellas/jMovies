@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+// Φόρμα "Αρχική"
 public class WelcomeForm extends javax.swing.JInternalFrame {
 
     private BufferedImage backgroundImage;

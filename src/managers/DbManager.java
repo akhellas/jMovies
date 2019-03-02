@@ -17,6 +17,7 @@ import model.FavoriteList;
 import model.Genre;
 import model.Movie;
 
+// Κλάση για την διαχείριση των κλήσεων προς τη Βάση Δεδομένων (ΒΔ)
 public final class DbManager {
 
     private static final String DB_CONNECTION_ERROR = "Αποτυχία σύνδεσης με τη Βάση Δεδομένων! \n\n(Σιγουρευτείτε ότι έχετε συνδεθεί μέσω του NetBeans IDE)";
@@ -47,6 +48,7 @@ public final class DbManager {
         return getManager().getTransaction();
     }
 
+    // Διαδικασία αρχικοποίησης ΒΔ
     public static void initializeDb(List<Genre> genres, List<Movie> movies) throws Exception {
         try {
             Query clearMovies = getManager().createQuery("DELETE FROM Movie");
@@ -61,10 +63,7 @@ public final class DbManager {
             clearFavoriteLists.executeUpdate();
 
             genres.forEach(genre -> DbManager.getManager().persist(genre));
-
-            movies.stream()
-                  .collect(Collectors.toMap(Movie::getId, m -> m, (m, q) -> m)).values()
-                  .forEach(movie -> DbManager.getManager().persist(movie));
+            movies.forEach(movie -> DbManager.getManager().persist(movie));
 
             transaction.commit();
         } catch (Exception exception) {
@@ -142,6 +141,10 @@ public final class DbManager {
     public static void deleteFavoriteList(FavoriteList list) {
         EntityTransaction transaction = getTransaction();
         transaction.begin();
+        
+        // ζητάμε από τη ΒΔ όλες τις ταινίες που ανήκουν στη λίστα
+        // που θέλουμε να σβήσουμε και πριν τη σβήσουμε τις
+        // αποσυσχετίζουμε
         List<Movie> movies = getMoviesByFavoriteList(list);
         movies.forEach(movie -> {
             movie.setFavoriteListId(null);
