@@ -16,7 +16,7 @@ public class WelcomeForm extends javax.swing.JInternalFrame {
 
         backgroundImage = null;
         try {
-            backgroundImage = ImageIO.read(new File("src/images/movies1.jpg"));
+            backgroundImage = ImageIO.read(new File("src/images/movies1_text.jpg"));
         } catch (IOException e) {
             System.out.println(e.toString());
         }
@@ -41,6 +41,7 @@ public class WelcomeForm extends javax.swing.JInternalFrame {
         setClosable(true);
         setTitle("Αρχική");
         setToolTipText("");
+        setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/film_reel.png"))); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);

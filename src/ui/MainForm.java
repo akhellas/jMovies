@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
 
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -75,7 +76,9 @@ public class MainForm extends javax.swing.JFrame {
 
                 DbManager.initializeDb(genres, movies);
 
-                UIHelper.showInfo(null, DB_INITIALIZATION_SUCCESS, "");
+                SwingUtilities.invokeLater(() -> {
+                    UIHelper.showInfo(null, DB_INITIALIZATION_SUCCESS, "");
+                });
             } catch (IOException | ParseException apiException) {
                 UIHelper.showError(null, API_GENERAL_ERROR);
             } catch (Exception dbException) {
@@ -86,7 +89,6 @@ public class MainForm extends javax.swing.JFrame {
 
         @Override
         protected void done() {
-            progressInitialize.setVisible(false);
             dialogInitialize.setVisible(false);
         }
     }
@@ -202,6 +204,7 @@ public class MainForm extends javax.swing.JFrame {
 
         fileMenu.setText("Αρχείο");
 
+        welcomeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.SHIFT_MASK));
         welcomeMenuItem.setText("Αρχική");
         welcomeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -211,6 +214,7 @@ public class MainForm extends javax.swing.JFrame {
         fileMenu.add(welcomeMenuItem);
         fileMenu.add(jSeparator1);
 
+        initializeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.SHIFT_MASK));
         initializeMenuItem.setText("Ανάκτηση και Αποθήκευση Δεδομένων Ταινιών");
         initializeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -219,6 +223,7 @@ public class MainForm extends javax.swing.JFrame {
         });
         fileMenu.add(initializeMenuItem);
 
+        favoriteListsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.SHIFT_MASK));
         favoriteListsMenuItem.setText("Διαχείριση Λιστών Αγαπημένων Ταινιών");
         favoriteListsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -227,6 +232,7 @@ public class MainForm extends javax.swing.JFrame {
         });
         fileMenu.add(favoriteListsMenuItem);
 
+        searchMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK));
         searchMenuItem.setText("Αναζήτηση Ταινιών");
         searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -235,6 +241,7 @@ public class MainForm extends javax.swing.JFrame {
         });
         fileMenu.add(searchMenuItem);
 
+        statisticsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK));
         statisticsMenuItem.setText("Στατιστικά");
         statisticsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -244,6 +251,7 @@ public class MainForm extends javax.swing.JFrame {
         fileMenu.add(statisticsMenuItem);
         fileMenu.add(jSeparator2);
 
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.SHIFT_MASK));
         exitMenuItem.setText("Έξοδος");
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,6 +264,7 @@ public class MainForm extends javax.swing.JFrame {
 
         aboutMenu.setText("Σχετικά");
 
+        aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK));
         aboutMenuItem.setText("Σχετικά με το MyMovies");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

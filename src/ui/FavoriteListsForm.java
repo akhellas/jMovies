@@ -95,6 +95,7 @@ public class FavoriteListsForm extends javax.swing.JInternalFrame {
         setMaximizable(true);
         setResizable(true);
         setTitle("Διαχείριση Λιστών Αγαπημένων Ταινιών");
+        setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/wish_list.png"))); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);

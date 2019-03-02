@@ -40,6 +40,7 @@ public class AboutForm extends javax.swing.JInternalFrame {
         setBorder(null);
         setClosable(true);
         setTitle("Σχετικά...");
+        setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/script.png"))); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);

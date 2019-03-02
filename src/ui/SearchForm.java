@@ -70,10 +70,12 @@ public class SearchForm extends javax.swing.JInternalFrame {
     }
 
     private void getGenres() {
-        genres = DbManager.getGenres();
-        DefaultComboBoxModel model = new DefaultComboBoxModel(genres.stream().map(genre -> genre.getName()).toArray());
-        model.insertElementAt("<Επιλέξτε Είδος>", 0);
-        genreComboBox.setModel(model);
+        if (genres == null) {
+            genres = DbManager.getGenres();
+            DefaultComboBoxModel model = new DefaultComboBoxModel(genres.stream().map(genre -> genre.getName()).toArray());
+            model.insertElementAt("<Επιλέξτε Είδος>", 0);
+            genreComboBox.setModel(model);
+        }
         genreComboBox.setSelectedIndex(0);
     }
 
@@ -155,6 +157,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
         setMaximizable(true);
         setResizable(true);
         setTitle("Αναζήτηση Ταινιών");
+        setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);
@@ -326,6 +329,8 @@ public class SearchForm extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_searchButtonActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        yearTextField.setText("");
+        ((DefaultTableModel) moviesTable.getModel()).setRowCount(0);
         getGenres();
         getFavoriteLists();
         updateSearchButtonState();
