@@ -32,6 +32,7 @@ public class StatisticsForm extends javax.swing.JInternalFrame {
             }
         });
 
+        bestMoviesByListButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/best_seller_mini.png"))); // NOI18N
         bestMoviesByListButton.setText("Οι Καλύτερες Ταινίες ανά Λίστα");
         bestMoviesByListButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -39,6 +40,7 @@ public class StatisticsForm extends javax.swing.JInternalFrame {
             }
         });
 
+        bestMoviesByRatingButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/leaderboard_mini.png"))); // NOI18N
         bestMoviesByRatingButton.setText("Οι Καλύτερες 10 Ταινίες");
         bestMoviesByRatingButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

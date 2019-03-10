@@ -77,6 +77,9 @@
       <SubComponents>
         <Component class="javax.swing.JToggleButton" name="bestMoviesByListButton">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/best_seller_mini.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="&#x39f;&#x3b9; &#x39a;&#x3b1;&#x3bb;&#x3cd;&#x3c4;&#x3b5;&#x3c1;&#x3b5;&#x3c2; &#x3a4;&#x3b1;&#x3b9;&#x3bd;&#x3af;&#x3b5;&#x3c2; &#x3b1;&#x3bd;&#x3ac; &#x39b;&#x3af;&#x3c3;&#x3c4;&#x3b1;"/>
           </Properties>
           <Events>
@@ -85,6 +88,9 @@
         </Component>
         <Component class="javax.swing.JToggleButton" name="bestMoviesByRatingButton">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/leaderboard_mini.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="&#x39f;&#x3b9; &#x39a;&#x3b1;&#x3bb;&#x3cd;&#x3c4;&#x3b5;&#x3c1;&#x3b5;&#x3c2; 10 &#x3a4;&#x3b1;&#x3b9;&#x3bd;&#x3af;&#x3b5;&#x3c2;"/>
           </Properties>
           <Events>

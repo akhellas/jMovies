@@ -27,7 +27,7 @@ public final class DbManager {
     private static EntityManagerFactory factory;
     private static EntityManager manager;
 
-    // μέθοδος που αρχικοποιείτον EntityManager αν δεν έχει αρχικοποιηθεί ήδη
+    // μέθοδος που αρχικοποιεί τον EntityManager αν δεν έχει αρχικοποιηθεί ήδη
     // και επιστρέφει το static instance που χρησιμοποιείται από την εφαρμογή
     public static EntityManager getManager() {
         try {
@@ -96,7 +96,16 @@ public final class DbManager {
                 .setMaxResults(1);
 
         return getFavoriteLists().stream()
-                .map(list -> (Movie) query.setParameter("favoriteList", list).getSingleResult())
+                .map(list -> {
+                    try {
+                        Movie mv = (Movie) query.setParameter("favoriteList", list).getSingleResult();
+                        System.out.println(mv.getTitle());
+                        return mv;
+                    } catch (Exception exception) {
+                        return null;
+                    }
+                })
+                .filter(movie -> movie != null)
                 .collect(Collectors.toList());
     }
 
@@ -141,7 +150,7 @@ public final class DbManager {
     public static void deleteFavoriteList(FavoriteList list) {
         EntityTransaction transaction = getTransaction();
         transaction.begin();
-        
+
         // ζητάμε από τη ΒΔ όλες τις ταινίες που ανήκουν στη λίστα
         // που θέλουμε να σβήσουμε και πριν τη σβήσουμε τις
         // αποσυσχετίζουμε

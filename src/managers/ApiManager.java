@@ -16,7 +16,7 @@ public final class ApiManager {
 
     private static final String BASE_URL = "https://api.themoviedb.org/3";
     private static final String API_KEY = "a84e0b9280822246eae80170242fecd0";
-    // ΠΑΡΑΔΟΧΗ: επειδή το API μας κάνει timeout, βάλαμε αυθαίρετα το όριο των 40 σελίδων αποτελεσμάτων
+    // ΠΑΡΑΔΟΧΗ: επειδή το API μας κάνει timeout, βάλαμε αυθαίρετα το όριο των 39 σελίδων αποτελεσμάτων
     private static final Integer API_LIMIT = 39; 
 
     // μέθοδος που "χτίζει" το url για τις κλήσεις στο API ανάλογα με τα key-value pairs παραμέτρων που της περνάμε

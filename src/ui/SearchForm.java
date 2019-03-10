@@ -177,6 +177,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
             }
         });
 
+        searchButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search_mini.png"))); // NOI18N
         searchButton.setText("Αναζήτηση");
         searchButton.setEnabled(false);
         searchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -185,6 +186,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
             }
         });
 
+        clearButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/clean_mini.png"))); // NOI18N
         clearButton.setText("Καθαρισμός Κριτηρίων");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,10 +218,10 @@ public class SearchForm extends javax.swing.JInternalFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(yearTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
-                .addComponent(searchButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(clearButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -273,6 +275,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
             }
         });
 
+        removeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/recycle_mini.png"))); // NOI18N
         removeButton.setText("Αφαίρεση από Λίστα");
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
 
@@ -27,15 +30,19 @@ public class MainForm extends javax.swing.JFrame {
 
     private static final String API_GENERAL_ERROR = "Αποτυχία σύνδεσης με το API (api.themoviedb.org)";
     private static final String DB_INITIALIZATION_SUCCESS = "Η ανάκτηση των δεδομένων ολοκληρώθηκε";
-
+    private static final String SYSTEM_EXIT = "Είστε σίγουροι ότι επιθυμείτε την οριστική έξοδο από την εφαρμογή MyMovies;";
+    
     private final WelcomeForm welcomeForm = new WelcomeForm();
     private final FavoriteListsForm favoriteListsForm = new FavoriteListsForm();
     private final SearchForm searchForm = new SearchForm();
     private final StatisticsForm statisticsForm = new StatisticsForm();
     private final AboutForm aboutForm = new AboutForm();
 
-    public MainForm() {
+    public MainForm() throws IOException {
         initComponents();
+
+        Image i = ImageIO.read(getClass().getResource("/icons/cinema.png"));
+        setIconImage(i);
 
         showForm(welcomeForm, true);
     }
@@ -68,7 +75,7 @@ public class MainForm extends javax.swing.JFrame {
         protected Void doInBackground() {
             try {
                 JSONArray genresJson = ApiManager.getGenres();
-                
+
                 // κάνουμε deserialize από json σε λίστα από Genre τα genres και
                 // τα φιλτράρουμε σύμφωνα με τις απαιτήσεις της εργασίας
                 genres = (List<Genre>) JsonDeserializer.genresFromJson(genresJson)
@@ -144,6 +151,7 @@ public class MainForm extends javax.swing.JFrame {
 
         labelInitialize.setText("Επιθυμείτε να γίνει Ανάκτηση και Αποθήκευση Δεδομένων Ταινιών;");
 
+        buttonInitialize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/initialize_mini.png"))); // NOI18N
         buttonInitialize.setText("Αρχικοποίηση");
         buttonInitialize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -151,6 +159,7 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        buttonCancelInitialize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel_mini.png"))); // NOI18N
         buttonCancelInitialize.setText("Άκυρο");
         buttonCancelInitialize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -309,6 +318,7 @@ public class MainForm extends javax.swing.JFrame {
         progressInitialize.setVisible(false);
         dialogInitialize.pack();
         dialogInitialize.setLocationRelativeTo(this);
+        dialogInitialize.getRootPane().setBorder(BorderFactory.createLineBorder(Color.darkGray, 1));
 
         dialogInitialize.setVisible(true);
     }//GEN-LAST:event_initializeMenuItemActionPerformed
@@ -326,7 +336,9 @@ public class MainForm extends javax.swing.JFrame {
 
     // Μενού "Αρχείο -> Έξοδος"
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        System.exit(0);
+        if (UIHelper.showConfirmation(this, SYSTEM_EXIT, "Έξοδος")) {
+            System.exit(0);
+        }       
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     // Μενού "Αρχείο -> Διαχείριση Λιστών Αγαπημένων Ταινιών"
@@ -387,7 +399,11 @@ public class MainForm extends javax.swing.JFrame {
         }
 
         java.awt.EventQueue.invokeLater(() -> {
-            new MainForm().setVisible(true);
+            try {
+                new MainForm().setVisible(true);
+            } catch (IOException ex) {
+                Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 
