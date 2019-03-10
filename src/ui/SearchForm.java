@@ -2,6 +2,7 @@ package ui;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultRowSorter;
 import javax.swing.ListSelectionModel;
@@ -91,7 +92,7 @@ public class SearchForm extends javax.swing.JInternalFrame {
 
     private void getMovies() {
         DefaultTableModel tableModel = (DefaultTableModel) moviesTable.getModel();
-        int rowIndex = moviesTable.getSelectedRow();
+        Movie selected = getSelectedMovie();
         tableModel.setRowCount(0);
 
         movies = DbManager.getMoviesByGenreAndYear(getSelectedGenre(), Integer.parseInt(yearTextField.getText()));
@@ -105,9 +106,14 @@ public class SearchForm extends javax.swing.JInternalFrame {
 
         moviesTable.setModel(tableModel);
         // αν στον πίνακα με τις ταινίες ήταν κάποια επιλεγμένη, την επιλέγει ξανά
-        if (rowIndex != -1) {
-            moviesTable.setRowSelectionInterval(rowIndex, rowIndex);
+        if (selected != null) {
+            Optional<Movie> movie = movies.stream().filter(mv -> mv.getId().equals(selected.getId())).findFirst();
+            if (movie.isPresent()) {
+                int rowIndex = movies.indexOf(movie.get());
+                moviesTable.setRowSelectionInterval(rowIndex, rowIndex);
+            }
         }
+
         listsComboBox.setSelectedIndex(0);
     }
 
